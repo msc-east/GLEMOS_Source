@@ -559,9 +559,461 @@ subroutine Jacob_Br_Chem3(N,Y,dFy,LdFy)
 
 end subroutine Jacob_Br_Chem3
 
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+! Subroutine reading distribution daily fields of chemical reactants
+!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+subroutine ReadReactDaily
+
+    integer status, ncid_in, var_id_in, start3(4), count3(4)
+    real qreact_buf( Imax, Jmax, Atm_Kmax, 1:4)
+    data start3 /1,1,1,1/
+    data count3 /Imax, Jmax, Atm_Kmax, 4/
+
+    integer(2) ii, jj
+    integer FileStat, i, j, k, t, Xscal, daF(2), mnF(2), yrF(2), nDay, flag, yrCur
+!    real qO3(NumPer), qSO2(NumPer), qOH(NumPer), qBr(NumPer), qBrO(NumPer), qPM(NumPer), qNO2(NumPer), qHO2(NumPer)
+!    real qH2O(NumPer), qCH4(NumPer), qHCL(NumPer)
+    real splRow(NumPer*2), Aver(Imin:Imax), dFdX(NumPer*2), d2FdX(NumPer*2), dFdXleft
+    
+    character(10) ReactNames(12)
+    data character / 'O3_', 'OH_', 'NO2_', 'HO2_', 'Br_', 'CH4_','CO_', 'HCl_', 'Cl_',  'SO2_', 'PM2.5_'/
+    integer, parameter reactSPnum = 9, reactGCnum= 2
+! Check for climatic run
+    if(climRun) then
+      yrCur=ClimYear
+    else
+      yrCur=Year
+    endif
+    
+    write(YearNum,'(i4)') yrCur
+    write(DayNum,'(i2.2)') Day
+
+    daF(1)=Day
+    mnF(1)=Month
+    yrF(1:2)=yrCur
+    if(Day<MonthDays(Month)) then
+      daF(2)=Day+1
+      mnF(2)=Month
+    elseif(Month<12) then
+      daF(2)=1
+      mnF(2)=Month+1
+    else
+      daF(2)=1
+      mnF(2)=1
+    endif
+
+    do nDay=1, 2
+
+
+!!!!!!!!!!!!!!!!
+
+write(fileName,'(a,i4,i2.2,i2.2,a4)') trim(OzoneName), yrF(nDay), mnF(nDay), daF(nDay), '.bin'
+
+!!!!!!!!!!!!!!!!
+! Reading O3 distribution
+    write(fileName,'(a,i4,i2.2,i2.2,a4)') trim(OzoneName), yrF(nDay), mnF(nDay), daF(nDay), '.bin'
+    fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
+    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qO3(t), t=1, NumPer)          ! ppbv
+          O3field(i,j,k,1:NumPer,nDay)=qO3(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(O3field<=0.) O3field=Zero
+    close(10)
+
+! Reading OH distribution
+    write(fileName,'(a,i4,i2.2,i2.2,a4)') trim(OHName), yrF(nDay), mnF(nDay), daF(nDay), '.bin'
+    fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
+    `open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qOH(t), t=1, NumPer)          ! ppbv
+          OHfield(i,j,k,1:NumPer,nDay)=qOH(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(OHfield<=0.) OHfield=Zero
+    close(10)
+
+! Reading SO2 distribution
+    write(fileName,'(a,i4,i2.2,i2.2,a4)') trim(SO2Name), yrF(nDay), mnF(nDay), daF(nDay), '.bin'
+    fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
+    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qSO2(t), t=1, NumPer)          ! ppbv
+          SO2field(i,j,k,1:NumPer,nDay)=qSO2(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(SO2field<=1.e-5) SO2field=1.e-5
+    close(10)
+
+! Reading PM2.5 distribution
+    write(fileName,'(a,i4,i2.2,i2.2,a4)') 'PM2.5_', yrF(nDay), mnF(nDay), daF(nDay), '.bin'
+    fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
+    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qPM(t), t=1, NumPer)          ! ppbm
+          PMfield(i,j,k,1:NumPer,nDay)=qPM(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(PMfield<=0.) PMfield=Zero
+    close(10)
+
+! Reading NO2 distribution
+!    write(fileName,'(a,i4,i2.2,i2.2,a4)') 'NO2_', yrF(nDay), mnF(nDay), daF(nDay), '.bin'
+!    fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
+write(fileName,'(a,i4,i2.2,i2.2,a4)') 'NO2_', 2013, mnF(nDay), daF(nDay), '.bin'
+fullName=trim(ReactPath1)//trim(GridCode)//'/'//'2013'//'/'//trim(fileName)
+    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qNO2(t), t=1, NumPer)          ! ppbv
+          NO2field(i,j,k,1:NumPer,nDay)=qNO2(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(NO2field<=0.) NO2field=Zero
+    close(10)
+
+! Reading HO2 distribution
+!    write(fileName,'(a,i4,i2.2,i2.2,a4)') 'HO2_', yrF(nDay), mnF(nDay), daF(nDay), '.bin'
+!    fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
+write(fileName,'(a,i4,i2.2,i2.2,a4)') 'HO2_', 2013, mnF(nDay), daF(nDay), '.bin'
+fullName=trim(ReactPath1)//trim(GridCode)//'/'//'2013'//'/'//trim(fileName)
+    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qHO2(t), t=1, NumPer)          ! ppbv
+          HO2field(i,j,k,1:NumPer,nDay)=qHO2(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(HO2field<=0.) HO2field=Zero
+    close(10)
+
+! Reading Br distribution
+!    write(fileName,'(a,i4,i2.2,i2.2,a4)') 'Br_', yrF(nDay), mnF(nDay), daF(nDay), '.bin'
+!    fullName=trim(ReactPath2)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
+write(fileName,'(a,i4,i2.2,i2.2,a4)') 'Br_', 2013, mnF(nDay), daF(nDay), '.bin'
+fullName=trim(ReactPath2)//trim(GridCode)//'/'//'2013/'//trim(fileName)
+    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qBr(t), t=1, NumPer)          ! ppbv
+!************************************************************************          
+!if(k>=9) qBr=qBr*3
+!************************************************************************          
+!if(k>6) cycle                                       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          Brfield(i,j,k,1:NumPer,nDay)=qBr(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(Brfield<=0.) Brfield=Zero
+    close(10)
+
+!do j=Jmin, Jmax                                     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!  do i=Imin, Imax                                   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!    if(sum(Brfield(i,j,1,1:NumPer,nDay))/NumPer<4.e-4) then  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!      Brfield(i,j,1:6,1:NumPer,nDay)=0.                  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!    endif                                           !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!  enddo                                             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!enddo                                               !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+! Reading H2O distribution
+    write(fileName,'(a,i4,i2.2,i2.2,a4)') 'H2O_', 2013, mnF(nDay), daF(nDay), '.bin'
+    fullName=trim(ReactPath2)//trim(GridCode)//'/'//'2013/'//trim(fileName)
+    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qH2O(t), t=1, NumPer)          ! ppbv
+          H2Ofield(i,j,k,1:NumPer,nDay)=qH2O(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(H2Ofield<=0.) H2Ofield=Zero
+    close(10)
+
+! Reading CH4 distribution
+    write(fileName,'(a,i4,i2.2,i2.2,a4)') 'CH4_', 2013, mnF(nDay), daF(nDay), '.bin'
+    fullName=trim(ReactPath2)//trim(GridCode)//'/'//'2013/'//trim(fileName)
+    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qCH4(t), t=1, NumPer)          ! ppbv
+          CH4field(i,j,k,1:NumPer,nDay)=qCH4(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(CH4field<=0.) CH4field=Zero
+    close(10)
+
+    write(fileName,'(a,i4,i2.2,i2.2,a4)') 'HCL_', 2013, mnF(nDay), daF(nDay), '.bin'
+    fullName=trim(ReactPath2)//trim(GridCode)//'/'//'2013/'//trim(fileName)
+    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+      stop
+    endif
+    do k=1, Atm_Kmax
+      do j=Jmin, Jmax
+        do i=Imin, Imax
+          read(10) (qHCL(t), t=1, NumPer)          ! ppbv
+          HCLfield(i,j,k,1:NumPer,nDay)=qHCL(1:NumPer)
+        enddo
+      enddo
+    enddo
+    where(HCLfield<=0.) HCLfield=Zero
+    close(10)
+
+    enddo
+
+! Grid aggregation
+    do j=Jmin, Jmax
+      if(maxI(j)==1) cycle
+      Xscal=Imax/maxI(j)
+      if(Xscal==1) cycle
+
+      do nDay=1, 2
+        do t=1, NumPer
+          do k=1, Atm_Kmax
+            Aver(Imin:Imax)=O3field(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            O3field(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+
+            Aver(Imin:Imax)=SO2field(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            SO2field(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+
+            Aver(Imin:Imax)=OHfield(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            OHfield(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+
+            Aver(Imin:Imax)=Brfield(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            Brfield(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+
+            Aver(Imin:Imax)=PMfield(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            PMfield(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+
+            Aver(Imin:Imax)=NO2field(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            NO2field(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+
+            Aver(Imin:Imax)=HO2field(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            HO2field(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+
+            Aver(Imin:Imax)=H2Ofield(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            H2Ofield(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+
+            Aver(Imin:Imax)=CH4field(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            CH4field(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+
+            Aver(Imin:Imax)=HCLfield(Imin:Imax,j,k,t,nDay)
+            call GridAggreg(j,Xscal,Aver,1)
+            HCLfield(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+          enddo
+        enddo
+      enddo
+    enddo
+
+    do j=Jmin, Jmax
+      do i=minI(j), maxI(j)
+        do k=1, Atm_Kmax
+          splRow(1:NumPer)=O3field(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=O3field(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dO3field(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dO3field(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2O3field(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+          splRow(1:NumPer)=SO2field(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=SO2field(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dSO2field(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dSO2field(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2SO2field(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+          splRow(1:NumPer)=OHfield(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=OHfield(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dOHfield(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dOHfield(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2OHfield(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+          splRow(1:NumPer)=Brfield(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=Brfield(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dBrfield(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dBrfield(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2Brfield(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+          splRow(1:NumPer)=PMfield(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=PMfield(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dPMfield(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dPMfield(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2PMfield(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+          splRow(1:NumPer)=NO2field(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=NO2field(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dNO2field(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dNO2field(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2NO2field(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+          splRow(1:NumPer)=HO2field(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=HO2field(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dHO2field(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dHO2field(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2HO2field(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+          splRow(1:NumPer)=H2Ofield(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=H2Ofield(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dH2Ofield(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dH2Ofield(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2H2Ofield(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+          splRow(1:NumPer)=CH4field(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=CH4field(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dCH4field(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dCH4field(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2CH4field(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+          splRow(1:NumPer)=HCLfield(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=HCLfield(i,j,k,1:NumPer,toMor)
+          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+            flag=0
+            dFdXleft=0.
+          else
+            flag=1
+            dFdXleft=dHCLfield(i,j,k,NumPer+1)
+          endif
+          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+          dHCLfield(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+          d2HCLfield(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!-----------------------------------------------------------------------------------
+        enddo
+      enddo
+    enddo
+
+end subroutine ReadReactDaily
 
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-! Subroutine reading distribution monthly fields of chemical reactants
+! Subroutine reading distribution monthly fields of photorates
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 subroutine ReadReactMonthly
 

@@ -32,7 +32,7 @@ module GeneralParams
 
     character(32) :: MODEL_NAME='GLEMOS' 
     character(64) :: MODEL_LONG_NAME='Global EMEP Multi-Media Modelling System' 
-    character(10) :: MODEL_VERSION='2.2.2'
+    character(10) :: MODEL_VERSION='2.2.2_dev'
     character(10) :: DumpVersion='2.2.2'
 
 !*************************  Constants  *************************!
