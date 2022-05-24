@@ -47,99 +47,98 @@ module Ocn_POP_General
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 subroutine Ocn_POP_Props(Subs)
 
-	integer i, FileStat, lenType, Subs, Form, Limit, Ind
-	character(80) strRead, strPar
-	character(30) strType, FormType(MaxForm)
-	integer mon, ios
+    integer i, FileStat, lenType, Subs, Form, Limit, Ind
+    character(80) strRead, strPar
+    character(30) strType, FormType(MaxForm)
+    integer mon, ios
+        
+    fileName='Ocn'//trim(PropName)//trim(SubsID(Subs))//'.dat'
+    fullName=trim(PropPath)//fileName
+    open(2, file=trim(fullName), status='old', iostat=FileStat, action='read')
+    if(FileStat>0) then
+      print '(/,"STOP: Cannot open file of ocean POP properties ''",a,"''",/)', trim(fullName)
+      stop
+    endif
 
-	fileName='Ocn'//trim(PropName)//trim(SubsID(Subs))//'.dat'
-	fullName=trim(PropPath)//fileName
-	open(2, file=trim(fullName), status='old', iostat=FileStat, action='read')
-	if(FileStat>0) then
-	  print '(/,"STOP: Cannot open file of ocean POP properties ''",a,"''",/)', trim(fullName)
-	  stop
-	endif
-
-	do
-	  read(2,'(a)',iostat=ios) strRead
-	  if(ios==-1) exit
+    do
+      read(2,'(a)',iostat=ios) strRead
+      if(ios==-1) exit
 
 ! Recognizing comments
-	  if(strRead(1:1)=='!'.or.strRead(1:1)==' '.or.strRead(1:1)=='	'.or.ichar(strRead(1:1))==13) cycle
-	  lenType=scan(strRead,'!')
-	  if(lenType>0) then
-	    strRead=strRead(:lenType-1)
-      endif
+      if(strRead(1:1)=='!'.or.strRead(1:1)==' '.or.strRead(1:1)=='	'.or.ichar(strRead(1:1))==13) cycle
+        lenType=scan(strRead,'!')
+        if(lenType>0) then
+          strRead=strRead(:lenType-1)
+        endif
 
-! Deleting tabs and line termination symbols
-	  lenType=scan(strRead,'	')
-	  do while (lenType>0)
-	    strRead=strRead(:lenType-1)//strRead(lenType+1:)
-		lenType=scan(strRead,'	')
-	  enddo
-	  lenType=scan(strRead,achar(13))
-      if(lenType>0) strRead=strRead(:lenType-1)
+! Deleting tabs and line termination symbols; codes: 9=\t, 32=space, 13=\n
+        lenType=scan(strRead, achar(9))
+        do while (lenType>0)
+          strRead=strRead(:lenType-1)//strRead(lenType+1:)
+          lenType=scan(strRead, achar(9)) 
+        enddo
+        lenType=scan(strRead,achar(13))
+        if(lenType>0) strRead=strRead(:lenType-1)
 
 ! Reading pollutant form
-	  if(strRead(1:1)=='[') then
-	    Limit=scan(strRead(2:),']')
-		lenType=Limit
-		strType=trim(strRead(2:lenType))
+        if(strRead(1:1)=='[') then
+          Limit=scan(strRead(2:),']')
+          lenType=Limit
+          strType=trim(strRead(2:lenType))
 
-		Form=0
-		do i=1, sFormNum(Ocn,Subs)
-		  if(strType==FormType(i)) then
-			Form=i
-			exit
-		  endif
-		enddo
-		if(Form==0) then
-		  print '(/,"STOP: Unknown pollutant form ''",a,"''",/)', trim(strType)
-		  stop
-		endif
+          Form=0
+          do i=1, sFormNum(Ocn,Subs)
+            if(strType==FormType(i)) then
+              Form=i
+              exit
+            endif
+          enddo
+          if(Form==0) then
+            print '(/,"STOP: Unknown pollutant form ''",a,"''",/)', trim(strType)
+            stop
+          endif
 
 ! Reading parameter type
-	  else
-		lenType=scan(strRead,':')
-		if(lenType==0) then
-	      print '(/,"STOP: Wrong format of file ''",a,"''",/)', trim(fileName)
-	      stop
-		endif
-		strType=trim(strRead(:lenType-1))
-	    strPar=strRead(lenType+1:)
-	    strPar=adjustl(strPar)
+      else
+        lenType=scan(strRead,':')
+        if(lenType==0) then
+          print '(/,"STOP: Wrong format of file ''",a,"''",/)', trim(fileName)
+          stop
+        endif
+        strType=trim(strRead(:lenType-1))
+        strPar=strRead(lenType+1:)
+        strPar=adjustl(strPar)
 
-		selectcase(strType)
+        selectcase(strType)
 !------------------------------------------------------------------
-		  case('Forms number')
-			read(strPar,'(i2)') sFormNum(Ocn,Subs)
+          case('Forms number')
+            read(strPar,'(i2)') sFormNum(Ocn,Subs)
             FormSubs(Ocn,NumForm(Ocn)+1:NumForm(Ocn)+sFormNum(Ocn,Subs))=Subs
-			if (sFormNum(Ocn,Subs).gt.0) then
-			NumSubsMedia(Ocn)=NumSubsMedia(Ocn)+1
-			gSubsMediaInd(Ocn,Subs)=NumSubsMedia(Ocn)
-			end if
+            if (sFormNum(Ocn,Subs).gt.0) then
+              NumSubsMedia(Ocn)=NumSubsMedia(Ocn)+1
+              gSubsMediaInd(Ocn,Subs)=NumSubsMedia(Ocn)
+            endif
 !------------------------------------------------------------------
-		  case('Forms')
-			read(strPar,*) (FormType(i), i=1, sFormNum(Ocn,Subs))
+          case('Forms')
+            read(strPar,*) (FormType(i), i=1, sFormNum(Ocn,Subs))
 !------------------------------------------------------------------
-		  case('Form ID')
-		    FormID(Ocn,Subs,Form)=strPar
+          case('Form ID')
+            FormID(Ocn,Subs,Form)=strPar
             sFormInd(Ocn,Subs,Form)=NumForm(Ocn)+1
             FormSubs(Ocn,sFormInd(Ocn,Subs,Form))=Subs
             NumForm(Ocn)=NumForm(Ocn)+1
 !------------------------------------------------------------------
-		  case('SeaDegr')
-             read(strPar,*) CDWater(Form,gSubsGroupInd(Subs))
+          case('SeaDegr')
+            read(strPar,*) CDWater(Form,gSubsGroupInd(Subs))
 !------------------------------------------------------------------
-		  case('SeaRedistr')
-              read(strPar,*)k_ph_rd(gSubsGroupInd(Subs))
+          case('SeaRedistr')
+            read(strPar,*)k_ph_rd(gSubsGroupInd(Subs))
 !------------------------------------------------------------------
-	endselect
+        endselect
+      endif
+    enddo 
 
-	  endif
-	enddo 
-
-	close(2)
+    close(2)
 
 end subroutine Ocn_POP_Props
 
@@ -372,21 +371,21 @@ subroutine Ocn_POPExchPar(NSubs)
 
     do j = JMin, JMax
         do i = MinI(j), MaxI(j)
-            Ux0=Ufric(i,j,Period,toDay)						! Mean friction velocity
+            Ux0=Ufric(i,j,Period,toDay)                                         ! Mean friction velocity
             Lmo0=MOLength(i,j,Period,toDay)
-            Pxx=Px(i,j,Period,toDay)						! Surface pressure Px=Ps-Pt
-            RT=RTemp(i,j,1,Period,toDay)					! RT of air at the lowest sigma level
-            ZoM=0.016*Ux0*Ux0/Ggrav+Nu/9.1*Ux0					! Roughness
-            Zr=RT/Ggrav*log((Pxx+Ptop)/(Sigma(1)*Pxx+Ptop))			! Height of the lowest sigma level
+            Pxx=Px(i,j,Period,toDay)                                            ! Surface pressure Px=Ps-Pt
+            RT=RTemp(i,j,1,Period,toDay)                                        ! RT of air at the lowest sigma level
+            ZoM=0.016*Ux0*Ux0/Ggrav+Nu/9.1*Ux0                                  ! Roughness
+            Zr=RT/Ggrav*log((Pxx+Ptop)/(Sigma(1)*Pxx+Ptop))                     ! Height of the lowest sigma level
             Ui=(Uwind(i,j,1,Period,toDay)+Uwind(i-1,j,1,Period,toDay))/2.
             if(j == 1) then
                 Uj=Vwind(i,j,1,Period,toDay)
             else
                 Uj=(Vwind(i,j,1,Period,toDay)+Vwind(i,j-1,1,Period,toDay))/2.
-            end if
-            Uref=sqrt(Ui*Ui+Uj*Uj)						! Absolute value of vind velosity
-            Ux=Karman*Uref/IphiM(Lmo0,Zr,ZoM)					! Friction velocity
-            Ux = max(Ux, 0.1)	! 09.04.2008 Ilia
+            endif
+            Uref=sqrt(Ui*Ui+Uj*Uj)                                              ! Absolute value of vind velosity
+            Ux=Karman*Uref/IphiM(Lmo0,Zr,ZoM)                                   ! Friction velocity
+            Ux = max(Ux, 0.1)                                                   ! 09.04.2008 
             Rab = 0.74*2.5/Ux*(alog(Zr/ZoM)-PsiH(Zr/Lmo0)+PsiH(ZoM/Lmo0)+&
                 &2*(1.5e-5/Dair(gSubsGroupInd(NSubs))/0.71)**(2./3.))
             Tsurf = TempSurf(i, j, Period)
