@@ -664,8 +664,8 @@ end subroutine Atm_CalcPOPWDCoeff
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 subroutine Atm_CalcPOPDDVelPart(NSubs)
 
-    integer i, j, NSubs,L
-    integer i, j, t, Surf, Ind, s, it
+    integer i, j, j1, NSubs
+    integer L, t, Surf, Ind, s, it
     character*20 SurfG
     real Pxx, Pa, RT, Rho, Tair, Psat, Qv, RH, Mu, Lmo0, Lmo(0:Soil_NumType), Almo, Zr, Ui, Uj, Uref, Kcond, Dh, SnowH, Tsurf
     real DpW, Kn, Cunn, Vg, DiffW, DpS, VgS, DiffS, VgF, DiffF, Ma, DiffG, Cpw, Dfor, Hfor, ZoM, ZoH, Ux0, Ux
@@ -706,8 +706,9 @@ subroutine Atm_CalcPOPDDVelPart(NSubs)
             if(j == Jmin) then
                 Uj=Vwind(i,j,1,Period,toDay)
             else
+                j1=j-1
                 Uj=(Vwind(i,j,1,Period,toDay)+&
-                        &Vwind(iS(i,j,1),j-1,1,Period,toDay))/2.                ! Corrected 31.10.2018
+                        &Vwind(iS(i,j,1),j1,1,Period,toDay))/2.                ! Corrected 31.10.2018
             end if
             Uref=sqrt(Ui*Ui+Uj*Uj)						! Absolute value of vind velosity
             Ux0=Ufric(i,j,Period,toDay)						! Mean friction velocity

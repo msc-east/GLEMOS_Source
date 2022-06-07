@@ -542,7 +542,7 @@ subroutine Atm_ReadReactDaily_GEOSChem
       enddo
       where(SO2field<=0.) SO2field=Zero
       call checkNC(nf90_close(ncid_in), 12)
-
+!
 ! Reading PM2.5 distribution
       write(fileName,'(a,i4,i2.2,i2.2,a4)') 'PM2.5_', yrF(nDay), mnF(nDay), daF(nDay), '.nc4'
       fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
@@ -568,52 +568,52 @@ subroutine Atm_ReadReactDaily_GEOSChem
       call checkNC(nf90_close(ncid_in), 13)
     
 ! Reading NO2 distribution
-      write(fileName,'(a,i4,i2.2,i2.2,a4)') 'NO2_', yrF(nDay), mnF(nDay), daF(nDay), '.nc4'
-      fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
-      status=nf90_open(trim(fullName), nf90_nowrite, ncid_in)
-      if(status/=nf90_noerr) then
-        print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
-        stop
-      endif
-      
-      call checkNC(nf90_inq_varid(ncid_in,'NO2',var_id_in),8)
-      call checkNC(nf90_get_var(ncid_in,var_id_in,qReact_buf,start3,count3), 9)
-      
-      do k=1, Atm_Kmax
-        do j=Jmin, Jmax
-          do i=Imin, Imax
-            do t = 1, NumPer
-              NO2field(i,j,k,t,nDay)=qReact_buf( i, j, k, t )
-            enddo
-          enddo
-        enddo
-      enddo
-      where(SO2field<=0.) NO2field=Zero
-      call checkNC(nf90_close(ncid_in), 12)
-
+!      write(fileName,'(a,i4,i2.2,i2.2,a4)') 'NO2_', yrF(nDay), mnF(nDay), daF(nDay), '.nc4'
+!      fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
+!      status=nf90_open(trim(fullName), nf90_nowrite, ncid_in)
+!      if(status/=nf90_noerr) then
+!        print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+!        stop
+!      endif
+!      
+!      call checkNC(nf90_inq_varid(ncid_in,'NO2',var_id_in),8)
+!      call checkNC(nf90_get_var(ncid_in,var_id_in,qReact_buf,start3,count3), 9)
+!      
+!      do k=1, Atm_Kmax
+!        do j=Jmin, Jmax
+!          do i=Imin, Imax
+!            do t = 1, NumPer
+!              NO2field(i,j,k,t,nDay)=qReact_buf( i, j, k, t )
+!            enddo
+!          enddo
+!        enddo
+!      enddo
+!      where(SO2field<=0.) NO2field=Zero
+!      call checkNC(nf90_close(ncid_in), 12)
+!
 ! Reading HO2 distribution
-      write(fileName,'(a,i4,i2.2,i2.2,a4)') 'HO2_', yrF(nDay), mnF(nDay), daF(nDay), '.nc4'
-      fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
-      status=nf90_open(trim(fullName), nf90_nowrite, ncid_in)
-      if(status/=nf90_noerr) then
-        print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
-        stop
-      endif
-      
-      call checkNC(nf90_inq_varid(ncid_in,'HO2',var_id_in),8)
-      call checkNC(nf90_get_var(ncid_in,var_id_in,qReact_buf,start3,count3), 9)
-      
-      do k=1, Atm_Kmax
-        do j=Jmin, Jmax
-          do i=Imin, Imax
-            do t = 1, NumPer
-              HO2field(i,j,k,t,nDay)=qReact_buf( i, j, k, t )
-            enddo
-          enddo
-        enddo
-      enddo
-      where(SO2field<=0.) HO2field=Zero
-      call checkNC(nf90_close(ncid_in), 12)
+!      write(fileName,'(a,i4,i2.2,i2.2,a4)') 'HO2_', yrF(nDay), mnF(nDay), daF(nDay), '.nc4'
+!      fullName=trim(ReactPath1)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
+!      status=nf90_open(trim(fullName), nf90_nowrite, ncid_in)
+!      if(status/=nf90_noerr) then
+!        print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
+!        stop
+!      endif
+!      
+!      call checkNC(nf90_inq_varid(ncid_in,'HO2',var_id_in),8)
+!      call checkNC(nf90_get_var(ncid_in,var_id_in,qReact_buf,start3,count3), 9)
+!      
+!      do k=1, Atm_Kmax
+!        do j=Jmin, Jmax
+!          do i=Imin, Imax
+!            do t = 1, NumPer
+!              HO2field(i,j,k,t,nDay)=qReact_buf( i, j, k, t )
+!            enddo
+!          enddo
+!        enddo
+!      enddo
+!      where(SO2field<=0.) HO2field=Zero
+!      call checkNC(nf90_close(ncid_in), 12)
 
 ! Reading Br distribution 
 !      write(fileName,'(a,i4,i2.2,i2.2,a4)') 'Br_', yrF(nDay), mnF(nDay), daF(nDay), '.nc4'
@@ -639,7 +639,6 @@ subroutine Atm_ReadReactDaily_GEOSChem
 !      where(Brfield<=0.) Brfield=Zero
 !      call checkNC(nf90_close(ncid_in), 13)
       
-! ----------------------------- Experimental -------------------------------------------
       write(fileName,'(a,i4,i2.2,i2.2,a4)') 'Br_', 2010, mnF(nDay), daF(nDay), '.bin'
       fullName=trim(ReactPath2)//trim(GridCode)//'/'//'2010/'//trim(fileName)
       open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
@@ -659,14 +658,13 @@ subroutine Atm_ReadReactDaily_GEOSChem
       where(Brfield<=0.) Brfield=Zero
       close(10)
 
-      do j=Jmin, Jmax                                     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        do i=Imin, Imax                                   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          if(sum(Brfield(i,j,1,1:NumPer,nDay))/NumPer<4.e-4) then  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Brfield(i,j,1:6,1:NumPer,nDay)=0.                  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          endif                                           !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        enddo                                             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      enddo                                               !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! ----------------------------- Experimental -------------------------------------------      
+      do j=Jmin, Jmax                                    
+        do i=Imin, Imax                                  
+          if(sum(Brfield(i,j,1,1:NumPer,nDay))/NumPer<4.e-4) then  
+            Brfield(i,j,1:6,1:NumPer,nDay)=0.                  
+          endif                                        
+        enddo                                             
+      enddo                                               
 
     enddo
    
@@ -695,13 +693,13 @@ subroutine Atm_ReadReactDaily_GEOSChem
             call GridAggreg(j,Xscal,Aver,1)
             Brfield(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
 
-            Aver(Imin:Imax)=NO2field(Imin:Imax,j,k,t,nDay)
-            call GridAggreg(j,Xscal,Aver,1)
-            NO2field(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+!            Aver(Imin:Imax)=NO2field(Imin:Imax,j,k,t,nDay)
+!            call GridAggreg(j,Xscal,Aver,1)
+!            NO2field(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
 
-            Aver(Imin:Imax)=HO2field(Imin:Imax,j,k,t,nDay)
-            call GridAggreg(j,Xscal,Aver,1)
-            HO2field(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
+!            Aver(Imin:Imax)=HO2field(Imin:Imax,j,k,t,nDay)
+!            call GridAggreg(j,Xscal,Aver,1)
+!            HO2field(minI(j):maxI(j),j,k,t,nDay)=Aver(minI(j):maxI(j))
 
             Aver(Imin:Imax)=PMfield(Imin:Imax,j,k,t,nDay)
             call GridAggreg(j,Xscal,Aver,1)
@@ -767,31 +765,31 @@ subroutine Atm_ReadReactDaily_GEOSChem
           dBrfield(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
           d2Brfield(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
 !-----------------------------------------------------------------------------------
-          splRow(1:NumPer)=NO2field(i,j,k,1:NumPer,toDay)
-          splRow(NumPer+1:NumPer*2)=NO2field(i,j,k,1:NumPer,toMor)
-          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
-            flag=0
-            dFdXleft=0.
-          else
-            flag=1
-            dFdXleft=dNO2field(i,j,k,NumPer+1)
-          endif
-          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
-          dNO2field(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
-          d2NO2field(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!          splRow(1:NumPer)=NO2field(i,j,k,1:NumPer,toDay)
+!          splRow(NumPer+1:NumPer*2)=NO2field(i,j,k,1:NumPer,toMor)
+!          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+!            flag=0
+!            dFdXleft=0.
+!          else
+!            flag=1
+!            dFdXleft=dNO2field(i,j,k,NumPer+1)
+!          endif
+!          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+!          dNO2field(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+!          d2NO2field(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
 !-----------------------------------------------------------------------------------
-          splRow(1:NumPer)=HO2field(i,j,k,1:NumPer,toDay)
-          splRow(NumPer+1:NumPer*2)=HO2field(i,j,k,1:NumPer,toMor)
-          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
-            flag=0
-            dFdXleft=0.
-          else
-            flag=1
-            dFdXleft=dHO2field(i,j,k,NumPer+1)
-          endif
-          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
-          dHO2field(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
-          d2HO2field(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
+!          splRow(1:NumPer)=HO2field(i,j,k,1:NumPer,toDay)
+!          splRow(NumPer+1:NumPer*2)=HO2field(i,j,k,1:NumPer,toMor)
+!          if(yrCur==BegDate(yr).and.Month==BegDate(mn).and.Day==BegDate(da)) then
+!            flag=0
+!            dFdXleft=0.
+!          else
+!            flag=1
+!            dFdXleft=dHO2field(i,j,k,NumPer+1)
+!          endif
+!          call SplineParams(NumPer*2,timePer,splRow,flag,dFdXleft,0,0.,dFdX,d2FdX)
+!          dHO2field(i,j,k,1:NumPer+1)=dFdX(1:NumPer+1)
+!          d2HO2field(i,j,k,1:NumPer+1)=d2FdX(1:NumPer+1)
 !-----------------------------------------------------------------------------------
           splRow(1:NumPer)=PMfield(i,j,k,1:NumPer,toDay)
           splRow(NumPer+1:NumPer*2)=PMfield(i,j,k,1:NumPer,toMor)
@@ -926,9 +924,6 @@ subroutine Atm_ReadReactDaily_MOZART
       close(10)
 
 ! Reading Br distribution
-! ----------------------------- Experimental -------------------------------------------
-!      write(fileName,'(a,i4,i2.2,i2.2,a4)') 'Br_', yrF(nDay), mnF(nDay), daF(nDay), '.bin'
-!      fullName=trim(ReactPath2)//trim(GridCode)//'/'//YearNum//'/'//trim(fileName)
       write(fileName,'(a,i4,i2.2,i2.2,a4)') 'Br_', 2010, mnF(nDay), daF(nDay), '.bin'
       fullName=trim(ReactPath2)//trim(GridCode)//'/'//'2010/'//trim(fileName)
       open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
@@ -940,7 +935,7 @@ subroutine Atm_ReadReactDaily_MOZART
         do j=Jmin, Jmax
           do i=Imin, Imax
             read(10) (qBr(t), t=1, NumPer)          ! ppbv
-            if(k>6) cycle                                       !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if(k>6) cycle                                       
             Brfield(i,j,k,1:NumPer,nDay)=qBr(1:NumPer)
           enddo
         enddo
@@ -948,15 +943,13 @@ subroutine Atm_ReadReactDaily_MOZART
       where(Brfield<=0.) Brfield=Zero
       close(10)
 
-      do j=Jmin, Jmax                                     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        do i=Imin, Imax                                   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          if(sum(Brfield(i,j,1,1:NumPer,nDay))/NumPer<4.e-4) then  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            Brfield(i,j,1:6,1:NumPer,nDay)=0.                  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-          endif                                           !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        enddo                                             !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      enddo                                               !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! ----------------------------- Experimental -------------------------------------------      
-
+      do j=Jmin, Jmax                                     
+        do i=Imin, Imax                                   
+          if(sum(Brfield(i,j,1,1:NumPer,nDay))/NumPer<4.e-4) then  
+            Brfield(i,j,1:6,1:NumPer,nDay)=0.                
+          endif                                           
+        enddo                                             
+      enddo                                              
     enddo
 
 ! Grid aggregation
@@ -1069,184 +1062,6 @@ end subroutine Atm_ReadReactDaily_MOZART
 
 
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-! Subroutine reading distribution monthly fields of chemical reactants
-!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-subroutine ReadReactMonthly
-
-    integer(2) ii, jj
-    integer FileStat, i, j, k, Xscal
-    real Ph_rate
-    real Aver(Imin:Imax)
-
-
-! Reading photolysis rate for HgBr2
-    write(fileName,'(a,i4,i2.2,a4)') 'Khgbr2_', 2013, Month, '.bin'
-    fullName='/home/alex/InputData/Reactants/Photolysis/'//trim(GridCode)//'/'//'2013'//'/'//trim(fileName)
-    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
-    if(FileStat>0) then
-      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
-      stop
-    endif
-    do k=1, Atm_Kmax
-      do j=Jmin, Jmax
-        do i=Imin, Imax
-          read(10) Ph_rate                        ! 1/s
-          PhotoRate(HgBr2,i,j,k)=max(real(Ph_rate,8),real(Zero,8))
-        enddo
-      enddo
-    enddo
-    close(10)
-
-! Reading photolysis rate for HgBrOH
-    write(fileName,'(a,i4,i2.2,a4)') 'Khgbroh_', 2013, Month, '.bin'
-    fullName='/home/alex/InputData/Reactants/Photolysis/'//trim(GridCode)//'/'//'2013'//'/'//trim(fileName)
-    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
-    if(FileStat>0) then
-      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
-      stop
-    endif
-    do k=1, Atm_Kmax
-      do j=Jmin, Jmax
-        do i=Imin, Imax
-          read(10) Ph_rate                        ! 1/s
-          PhotoRate(HgBrOH,i,j,k)=max(real(Ph_rate,8),real(Zero,8))
-        enddo
-      enddo
-    enddo
-    close(10)
-
-! Reading photolysis rate for HgBrOOH
-    write(fileName,'(a,i4,i2.2,a4)') 'Khgbrooh_', 2013, Month, '.bin'
-    fullName='/home/alex/InputData/Reactants/Photolysis/'//trim(GridCode)//'/'//'2013'//'/'//trim(fileName)
-    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
-    if(FileStat>0) then
-      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
-      stop
-    endif
-    do k=1, Atm_Kmax
-      do j=Jmin, Jmax
-        do i=Imin, Imax
-          read(10) Ph_rate                        ! 1/s
-          PhotoRate(HgBrOOH,i,j,k)=max(real(Ph_rate,8),real(Zero,8))
-        enddo
-      enddo
-    enddo
-   close(10)
-
-! Reading photolysis rate for HgBrONO
-!    write(fileName,'(a,i4,i2.2,a4)') 'Khgbrno2_', 2013, Month, '.bin'
-    write(fileName,'(a,i4,i2.2,a4)') 'Khgbrono_syn_', 2013, Month, '.bin'
-    fullName='/home/alex/InputData/Reactants/Photolysis/'//trim(GridCode)//'/'//'2013'//'/'//trim(fileName)
-    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
-    if(FileStat>0) then
-      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
-      stop
-    endif
-    do k=1, Atm_Kmax
-      do j=Jmin, Jmax
-        do i=Imin, Imax
-          read(10) Ph_rate                        ! 1/s
-          PhotoRate(HgBrONO,i,j,k)=max(real(Ph_rate,8),real(Zero,8))
-        enddo
-      enddo
-    enddo
-    close(10)
-
-! Reading photolysis rate for HgBr
-    write(fileName,'(a,i4,i2.2,a4)') 'Khgbr_', 2013, Month, '.bin'
-    fullName='/home/alex/InputData/Reactants/Photolysis/'//trim(GridCode)//'/'//'2013'//'/'//trim(fileName)
-    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
-    if(FileStat>0) then
-      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
-      stop
-    endif
-    do k=1, Atm_Kmax
-      do j=Jmin, Jmax
-        do i=Imin, Imax
-          read(10) Ph_rate                        ! 1/s
-          PhotoRate(HgBr,i,j,k)=max(real(Ph_rate,8),real(Zero,8))
-        enddo
-      enddo
-    enddo
-    close(10)
-    
-! Reading photolysis rate for HOHg
-    write(fileName,'(a,i4,i2.2,a4)') 'Khgoh_', 2013, Month, '.bin'
-    fullName='/home/alex/InputData/Reactants/Photolysis/'//trim(GridCode)//'/'//'2013'//'/'//trim(fileName)
-    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
-    if(FileStat>0) then
-      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
-      stop
-    endif
-    do k=1, Atm_Kmax
-      do j=Jmin, Jmax
-        do i=Imin, Imax
-          read(10) Ph_rate                        ! 1/s
-          PhotoRate(HOHg,i,j,k)=max(real(Ph_rate,8),real(Zero,8))
-        enddo
-      enddo
-    enddo
-    close(10)
-    
-! Reading photolysis rate for HgO
-!    write(fileName,'(a,i4,i2.2,a4)') 'Khgo_', 2013, Month, '.bin'
-!    fullName='/home/alex/InputData/Reactants/Photolysis/'//trim(GridCode)//'/'//'2013'//'/'//trim(fileName)
-!    open(10, file=fullName, form='unformatted', access="stream", status='old', iostat=FileStat, action='read') !
-!    if(FileStat>0) then
-!      print '(/,"STOP: Cannot open file ''",a,"''",/)', trim(fullName)
-!      stop
-!    endif
-!    do k=1, Atm_Kmax
-!      do j=Jmin, Jmax
-!        do i=Imin, Imax
-!          read(10) Ph_rate                        ! 1/s
-!          PhotoRate(HgO,i,j,k)=max(real(Ph_rate,8),real(Zero,8))
-!        enddo
-!      enddo
-!    enddo
-!    close(10)
-    
-! Grid aggregation
-    do j=Jmin, Jmax
-      if(maxI(j)==1) cycle
-      Xscal=Imax/maxI(j)
-      if(Xscal==1) cycle
-
-      do k=1, Atm_Kmax
-        Aver(Imin:Imax)=PhotoRate(HgBr2,Imin:Imax,j,k)
-        call GridAggreg(j,Xscal,Aver,1)
-        PhotoRate(HgBr2,minI(j):maxI(j),j,k)=Aver(minI(j):maxI(j))
-
-        Aver(Imin:Imax)=PhotoRate(HgBrOH,Imin:Imax,j,k)
-        call GridAggreg(j,Xscal,Aver,1)
-        PhotoRate(HgBrOH,minI(j):maxI(j),j,k)=Aver(minI(j):maxI(j))
-
-        Aver(Imin:Imax)=PhotoRate(HgBrOOH,Imin:Imax,j,k)
-        call GridAggreg(j,Xscal,Aver,1)
-        PhotoRate(HgBrOOH,minI(j):maxI(j),j,k)=Aver(minI(j):maxI(j))
-
-        Aver(Imin:Imax)=PhotoRate(HgBrONO,Imin:Imax,j,k)
-        call GridAggreg(j,Xscal,Aver,1)
-        PhotoRate(HgBrONO,minI(j):maxI(j),j,k)=Aver(minI(j):maxI(j))
-
-        Aver(Imin:Imax)=PhotoRate(HgBr,Imin:Imax,j,k)
-        call GridAggreg(j,Xscal,Aver,1)
-        PhotoRate(HgBr,minI(j):maxI(j),j,k)=Aver(minI(j):maxI(j))
-        
-        Aver(Imin:Imax)=PhotoRate(HOHg,Imin:Imax,j,k)
-        call GridAggreg(j,Xscal,Aver,1)
-        PhotoRate(HOHg,minI(j):maxI(j),j,k)=Aver(minI(j):maxI(j))
-        
-!        Aver(Imin:Imax)=PhotoRate(HgO,Imin:Imax,j,k)
-!        call GridAggreg(j,Xscal,Aver,1)
-!        PhotoRate(HgO,minI(j):maxI(j),j,k)=Aver(minI(j):maxI(j))
-      enddo
-    enddo
-
-end subroutine ReadReactMonthly
-
-
-!%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ! Subroutine transforming reactants form [ppb] to [molec/cm3]
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 subroutine ReactTransformSteply
@@ -1307,12 +1122,12 @@ subroutine ReactTransformSteply
 !          ReactMixR=max(splVal,min(splRow(Period),splRow(Period+1)))
 !          ConcHO2(i,j,k)=real(ReactMixR*1.e-9*RhoAirNum,8)                 ! ppbv -> molec/cm3
 
-!          splRow(1:NumPer)=PMfield(i,j,k,1:NumPer,toDay)
-!          splRow(NumPer+1:NumPer*2)=PMfield(i,j,k,1:NumPer,toMor)
-!          d2FdX(1:NumPer+1)=d2PMfield(i,j,k,1:NumPer+1)
-!          splVal=SplineInterpol(NumPer*2,timePer,splRow,d2FdX,Period,DayTime)
-!          ReactMixR=max(splVal,min(splRow(Period),splRow(Period+1)))
-!          ConcPM(i,j,k)=real(ReactMixR*1.e-9*RhoAir,8)                      ! ppbm -> kg/m3
+          splRow(1:NumPer)=PMfield(i,j,k,1:NumPer,toDay)
+          splRow(NumPer+1:NumPer*2)=PMfield(i,j,k,1:NumPer,toMor)
+          d2FdX(1:NumPer+1)=d2PMfield(i,j,k,1:NumPer+1)
+          splVal=SplineInterpol(NumPer*2,timePer,splRow,d2FdX,Period,DayTime)
+          ReactMixR=max(splVal,min(splRow(Period),splRow(Period+1)))
+          ConcPM(i,j,k)=real(ReactMixR*1.e-9*RhoAir,8)                      ! ppbm -> kg/m3
         enddo
       enddo
     enddo

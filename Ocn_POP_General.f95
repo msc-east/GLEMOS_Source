@@ -359,18 +359,18 @@ end function Ocn_POPMass
 !===========================================================
 subroutine Ocn_POPExchPar(NSubs)
 
-  integer i, j, NSubs
+  integer i, j, j1, NSubs
   real OVE
   real Henry, TSurf, AbsVel, a1, a2, dzwm
   real RSea            ! Resistance of the first water layer
-  real Rab,RT,Pxx,Zr,Ux,ZoM,Ux0,Lmo0,Ui,Uj,Uref
+  real Rab, RT, Pxx, Zr, Ux, ZoM, Ux0, Lmo0, Ui, Uj, Uref
 
 #ifdef DEBUG_MODE
       print *, '-> Entering Ocn_POPExchPar...'
 #endif
 
-    do j = JMin, JMax
-        do i = MinI(j), MaxI(j)
+    do j = Jmin, Jmax
+        do i = minI(j), maxI(j)
             Ux0=Ufric(i,j,Period,toDay)                                         ! Mean friction velocity
             Lmo0=MOLength(i,j,Period,toDay)
             Pxx=Px(i,j,Period,toDay)                                            ! Surface pressure Px=Ps-Pt
@@ -378,10 +378,11 @@ subroutine Ocn_POPExchPar(NSubs)
             ZoM=0.016*Ux0*Ux0/Ggrav+Nu/9.1*Ux0                                  ! Roughness
             Zr=RT/Ggrav*log((Pxx+Ptop)/(Sigma(1)*Pxx+Ptop))                     ! Height of the lowest sigma level
             Ui=(Uwind(i,j,1,Period,toDay)+Uwind(i-1,j,1,Period,toDay))/2.
-            if(j == 1) then
-                Uj=Vwind(i,j,1,Period,toDay)
+            if(j>Jmin) then
+              j1=j-1
+              Uj=(Vwind(i,j,1,Period,toDay)+Vwind(iS(i,j,1),j1,1,Period,toDay))/2. ! Shift due to grid aggregation
             else
-                Uj=(Vwind(i,j,1,Period,toDay)+Vwind(i,j-1,1,Period,toDay))/2.
+              Uj=Vwind(i,j,1,Period,toDay)
             endif
             Uref=sqrt(Ui*Ui+Uj*Uj)                                              ! Absolute value of vind velosity
             Ux=Karman*Uref/IphiM(Lmo0,Zr,ZoM)                                   ! Friction velocity
