@@ -227,7 +227,7 @@ subroutine Atm_WriteNCF_Initial
 
 ! Set up matrix for output variables control
     fld_ncf_out(:,AC_3D) = (/.false.,.false., .true., .true., .true./)
-    fld_ncf_out(:,MR_3D) = (/.false., .true.,.false., .true., .true./)
+    fld_ncf_out(:,MR_3D) = (/.false., .true.,.false.,.true.,.true./)
     fld_ncf_out(:,DD_2D) = (/.false.,.false., .true., .true., .true./)
     fld_ncf_out(:,WD_2D) = (/.false.,.false., .true., .true., .true./)
     fld_ncf_out(:,RE_2D) = (/.false.,.false., .true., .true., .true./)
@@ -1252,7 +1252,8 @@ subroutine Atm_WriteNCF_AirMonit(sbs, ts, itm, tprf, fpsfx)
     call check_NC( nf90_def_dim(nfid, 'SrcStrLen', len(SourcID), src_len_dimid), nn+5)
     call check_NC( nf90_def_dim(nfid, 'NumSrcStr', NumSrc, src_num_dimid), nn+6)
 
-    call check_NC( nf90_def_dim(nfid, 'StnStrLen', len(SourcID), stn_len_dimid), nn+7)
+!    call check_NC( nf90_def_dim(nfid, 'StnStrLen', len(SourcID), stn_len_dimid), nn+7) ! Bug, fixed 22.03.2022
+    call check_NC( nf90_def_dim(nfid, 'StnStrLen', len(sta_nm), stn_len_dimid), nn+7)
     call check_NC( nf90_def_dim(nfid, 'NumStnAirStr', NAir, sta_num_dimid), nn+8)
 
     call check_NC(nf90_def_var(nfid, SRC_ARR, NF90_CHAR, DimIDs=(/src_len_dimid,src_num_dimid/), VarID=src_nm_id), nn+9)
@@ -1268,7 +1269,8 @@ subroutine Atm_WriteNCF_AirMonit(sbs, ts, itm, tprf, fpsfx)
     call check_NC(nf90_put_att(nfid, src_st_id, LNG_NAME, SRC_LNG), nn+18)
     call check_NC(nf90_put_att(nfid, src_st_id, STD_NAME, SRC_STD), nn+19)
 
-    call check_NC(nf90_def_var(nfid, STA_ARR, NF90_CHAR, DimIDs=(/src_len_dimid,sta_num_dimid/), VarID=sta_nm_id), nn+20)
+!    call check_NC(nf90_def_var(nfid, STA_ARR, NF90_CHAR, DimIDs=(/src_len_dimid,sta_num_dimid/), VarID=sta_nm_id), nn+20)  ! Bug, fixed 22.03.2022
+    call check_NC(nf90_def_var(nfid, STA_ARR, NF90_CHAR, DimIDs=(/stn_len_dimid,sta_num_dimid/), VarID=sta_nm_id), nn+20)
     call check_NC(nf90_def_var(nfid, STA_NAME, NF90_REAL, sta_dimid, sta_id), nn+21)
     call check_NC(nf90_put_att(nfid, sta_id, UNITS, "station"), nn+22)
     call check_NC(nf90_put_att(nfid, sta_id, LNG_NAME, STA_LNG), nn+23)
@@ -1294,7 +1296,7 @@ subroutine Atm_WriteNCF_AirMonit(sbs, ts, itm, tprf, fpsfx)
 
     call check_NC(nf90_put_var(nfid, time_st_id, 0), nn+2)
     call check_NC(nf90_put_var(nfid, src_nm_id, SourcID(1:NumSrc)), nn+30)
-    call check_NC(nf90_put_var(nfid, sta_nm_id, sta_nm), nn+31)
+    call check_NC(nf90_put_var(nfid, sta_nm_id, sta_nm(1:NAir)), nn+31)
 
     start3 = (/1,1,1,1/)
     count3 = (/NAir,NumSrc,sFormNum(Atm, sbs),1/)
@@ -1336,7 +1338,8 @@ subroutine Atm_WriteNCF_PrecMonit(sbs, ts, itm, tprf, fpsfx)
     call check_NC( nf90_def_dim(nfid, 'SrcStrLen', len(SourcID), src_len_dimid), nn+5)
     call check_NC( nf90_def_dim(nfid, 'NumSrcStr', NumSrc, src_num_dimid), nn+6)
 
-    call check_NC( nf90_def_dim(nfid, 'StnStrLen', len(SourcID), stn_len_dimid), nn+7)
+!    call check_NC( nf90_def_dim(nfid, 'StnStrLen', len(SourcID), stn_len_dimid), nn+7)   ! Bug, fixed 22.03.2022
+    call check_NC( nf90_def_dim(nfid, 'StnStrLen', len(stp_nm), stn_len_dimid), nn+7)
     call check_NC( nf90_def_dim(nfid, 'NumStnPrecStr', NPrec, stp_num_dimid), nn+9)
 
     call check_NC(nf90_def_var(nfid, SRC_ARR, NF90_CHAR, DimIDs=(/src_len_dimid,src_num_dimid/), VarID=src_nm_id), nn+10)
@@ -1352,7 +1355,8 @@ subroutine Atm_WriteNCF_PrecMonit(sbs, ts, itm, tprf, fpsfx)
     call check_NC(nf90_put_att(nfid, src_st_id, LNG_NAME, SRC_LNG), nn+19)
     call check_NC(nf90_put_att(nfid, src_st_id, STD_NAME, SRC_STD), nn+20)
 
-    call check_NC(nf90_def_var(nfid, STP_ARR, NF90_CHAR, DimIDs=(/src_len_dimid,stp_num_dimid/), VarID=stp_nm_id), nn+21)
+!    call check_NC(nf90_def_var(nfid, STP_ARR, NF90_CHAR, DimIDs=(/src_len_dimid,stp_num_dimid/), VarID=stp_nm_id), nn+21) ! Bug, fixed 22.03.2022
+    call check_NC(nf90_def_var(nfid, STP_ARR, NF90_CHAR, DimIDs=(/stn_len_dimid,stp_num_dimid/), VarID=stp_nm_id), nn+21)
     call check_NC(nf90_def_var(nfid, STP_NAME, NF90_REAL, stp_dimid, stp_id), nn+22)
     call check_NC(nf90_put_att(nfid, stp_id, UNITS, "station"), nn+23)
     call check_NC(nf90_put_att(nfid, stp_id, LNG_NAME, STP_LNG), nn+24)
