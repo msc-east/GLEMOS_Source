@@ -96,12 +96,8 @@ subroutine Atm_Hg_Process(Subs)
 
     if(order>0) then
       call Atm_Hg_DropChem
-!      call Atm_Hg_GasChem_Br
-!      call Atm_Hg_GasChem_Br2
       call Atm_Hg_GasChem_O3_OH
     else
-!      call Atm_Hg_GasChem_Br
-!      call Atm_Hg_GasChem_Br2
       call Atm_Hg_GasChem_O3_OH
       call Atm_Hg_DropChem
     endif
