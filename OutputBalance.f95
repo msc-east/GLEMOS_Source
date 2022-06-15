@@ -429,7 +429,7 @@ subroutine WriteBalanceStringToFile
     fullName=trim(OutPath)//trim(BalanceDir)//'Balance.dat'
     open(103, file=fullName, action='write', status='old', access='append', iostat = st)
     if(st /= 0) then
-        print '(/,"STOP in WriteBalanceStringToFile: Cannot create file ''",a,"''",/)', trim(fullName)
+        print '(/,"STOP in WriteBalanceStringToFile: Cannot open file ''",a,"''",/)', trim(fullName)
         stop
     endif
 
