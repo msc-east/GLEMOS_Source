@@ -71,7 +71,6 @@ module GeneralParams
     integer, parameter :: Jmin=1                        ! Beginning of model domain in J direction
     integer, parameter :: Imax=GRIDIMAX                 ! End of model domain in I direction
     integer, parameter :: Jmax=GRIDJMAX                 ! End of model domain in J direction 
-!    real, parameter  :: dLmin=MINSTEP                  ! Minimum grid step in zonal direction (m)
     real dLmin                                          ! Minimum grid step in zonal direction (m)
 #if (REGTYPE==1)
     integer, parameter :: bImin=Imin                    ! Location of left boundary

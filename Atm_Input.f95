@@ -302,7 +302,6 @@ subroutine SourceList
     endselect
     do Src=1, NumNat
       SourcID(NumAnth+Src)=NaturID(Src)
-!      if(trim(NaturID(Src))=='restNat') restNat=NumAnth+Src 
     enddo
     NumSrc=NumAnth+NumNat
 
@@ -320,8 +319,6 @@ subroutine SourceList
 
     SrcInd=0
     do Src=1, NumBnd
-!      if(BoundID(Src)=='restAnt') BoundID(Src)='bndAnt'
-!      if(BoundID(Src)=='restNat') BoundID(Src)='bndNat'
       SrcInd=0
       do Src1=1, NumSrc
         if(BoundID(Src)==SourcID(Src1)) then

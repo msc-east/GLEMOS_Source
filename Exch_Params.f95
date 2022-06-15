@@ -97,10 +97,6 @@ module Exch_Params
     real DeltaT
     integer NSteps
 
-!    real(8) :: AirSoilFlux = 0.          ! 19-09-2019
-!    real(8) :: AirVegFlux  = 0.
-!    real(8) :: AirOcnFlux  = 0.
-!    real(8) :: VegSoilFlux = 0.
     real(8) :: AirSoilFlux = 0.
     real(8) :: AirVegFlux  = 0.
     real(8) :: AirOcnFlux  = 0.

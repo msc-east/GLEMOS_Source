@@ -272,15 +272,6 @@ subroutine DryDepos
     real(8) Tage, Tred, expAge, expRed, MassFresh, MassAge, MassRed
     real splRow(NumPer*2)
  
-! Definition of elemental gaseous form
-!     do Form=1, NumForm(Atm)
-!       Subs=FormSubs(Atm,Form)
-!       if(FormID(Atm,Subs,Form)=='0_gas') then
-!         Gas=Form
-!         exit
-!       endif
-!     enddo
-  
     dT=Tstep(Atm)
     tDay=DayTime
     do j=Jmin, Jmax
@@ -370,14 +361,6 @@ subroutine WetDepos
     real(8) Tage, Tred, expAge, expRed, MassFresh, MassAge, MassRed
 
 
-! Definition of particulate and elemental gaseous forms
-!      do Form=1, NumForm(Atm)
-!        if(FormID(Atm,Subs,Form)=='0_gas') then
-!          Gas=Form
-!          exit
-!       endif
-!      enddo
-   
     dT=Tstep(Atm)
     do j=Jmin, Jmax
       do i=minI(j), maxI(j)
@@ -523,8 +506,6 @@ DryRemMonth(i,j,Hg0,Surf,Src)=DryRemMonth(i,j,Hg0,Surf,Src)+MassRed
 #endif
 !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-!              WetDepMonth(i,j,Form,Surf,Src)=WetDepMonth(i,j,Form,Surf,Src)&
-!                    &+MassDep(Form,Src)*Lcover(Surf)
               WetDepDay(i,j,Form,Surf,Src)=WetDepDay(i,j,Form,Surf,Src)+MassDep(Form,Src)*Lcover(Surf)
             enddo
             MassWetDep(Form)=MassWetDep(Form)+MassDep(Form,Src)
@@ -532,7 +513,6 @@ DryRemMonth(i,j,Hg0,Surf,Src)=DryRemMonth(i,j,Hg0,Surf,Src)+MassRed
         enddo
 
 ! Accumulation of precipitation
-!        PrecipMonth(i,j)=PrecipMonth(i,j)+Iprec(1)*dT
         PrecipDay(i,j)=PrecipDay(i,j)+Iprec(1)*dT
       enddo
     enddo

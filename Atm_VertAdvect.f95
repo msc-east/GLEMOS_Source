@@ -142,8 +142,6 @@ subroutine Vert_Advect(Form,Pbeg,Pfin)
 	
 		MassAtmUp(Form)=MassAtmUp(Form)+Jdown(Atm_Kmax+1)*Veff(i,j,Atm_Kmax+1) 
 		MassAtmUp(Form)=MassAtmUp(Form)-Jup(Atm_Kmax)*Veff(i,j,Atm_Kmax)
-!        FluxAtmUp(i,j)=FluxAtmUp(i,j)+Jup(Atm_Kmax)*Veff(i,j,Atm_Kmax)/MeshArea(i,j)               ! Commented AG 23.01.17
-!        FluxAtmDn(i,j)=FluxAtmDn(i,j)-Jdown(Atm_Kmax+1)*Veff(i,j,Atm_Kmax+1)/MeshArea(i,j)         ! Commented AG 23.01.17
       enddo
 	enddo
 
@@ -282,12 +280,6 @@ subroutine Sigma_veloc(Nvert)
 	print '(/,"STOP: Unknown method of vertical velocity calculation: ",i2,/)', A_VTYPE
 	stop
 #endif
-
-!	if(CourMaxSigma>1.) then
-!	  Nvert=ceiling(CourMaxSigma)
-!	  CourDn=CourDn/Nvert
-!	  CourUp=CourUp/Nvert
-!	endif
 
 end subroutine Sigma_veloc
 

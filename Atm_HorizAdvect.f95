@@ -205,20 +205,14 @@ real(8) qCont1(MaxMatr)
           if(Qtemp>0.) then
             do Src=1, NumSrc
               if(n1==n2) then
-!                qCont=SpecLatNew(i,j)*aLt(i,j,Src)-dY/2.*(ctgdY2-tgY(j))*(Jnorth(i,j)*aLt(i,j,Src)-Jsouth(i,j+1)*aLt(i,j+1,Src))  ! Check indecies of aLt !!!!!!!!!!!!!!!!!!!!!!!!!!
                 qCont=SpecLatNew(i,j)*aLt(i,j,Src)-dY/2.*(ctgdY2-tgY(j))*(Jnorth(i,j)*aLt(i,j,Src)-Jsouth(i,j+1)*aLt(n1,j+1,Src))  ! Check indecies of aLt !!!!!!!!!!!!!!!!!!!!!!!!!!
               else
-!                qCont=SpecLatNew(i,j)*aLt(i,j,Src)-dY/2.*(ctgdY2-tgY(j))*(Jnorth(n1,j)*aLt(n1,j,Src)&
-!                    &-Jsouth(n1,j+1)*aLt(n1,j+1,Src)+Jnorth(n2,j)*aLt(n2,j,Src)-Jsouth(n2,j+1)*aLt(n2,j+1,Src))/2.
                 qCont=SpecLatNew(i,j)*aLt(i,j,Src)-dY/2.*(ctgdY2-tgY(j))*(Jnorth(n1,j)*aLt(i,j,Src)&
                     &-Jsouth(n1,j+1)*aLt(n1,j+1,Src)+Jnorth(n2,j)*aLt(i,j,Src)-Jsouth(n2,j+1)*aLt(n2,j+1,Src))/2.
               endif
               if(s1==s2) then
-!                qCont=qCont+dY/2.*(ctgdY2+tgY(j))*(Jnorth(i,j-1)*aLt(i,j-1,Src)-Jsouth(i,j)*aLt(i,j,Src))  ! Check indecies of aLt !!!!!!!!!!!!!!!!!!!!!!!!!!
                 qCont=qCont+dY/2.*(ctgdY2+tgY(j))*(Jnorth(i,j-1)*aLt(s1,j-1,Src)-Jsouth(i,j)*aLt(i,j,Src))  ! Check indecies of aLt !!!!!!!!!!!!!!!!!!!!!!!!!!
               else
-!                qCont=qCont+dY/2.*(ctgdY2+tgY(j))*(Jnorth(s1,j-1)*aLt(s1,j-1,Src)-Jsouth(s1,j)*aLt(s1,j,Src)&
-!                    &+Jnorth(s2,j-1)*aLt(s2,j-1,Src)-Jsouth(s2,j)*aLt(s2,j,Src))/2.
                 qCont=qCont+dY/2.*(ctgdY2+tgY(j))*(Jnorth(s1,j-1)*aLt(s1,j-1,Src)-Jsouth(s1,j)*aLt(i,j,Src)&
                     &+Jnorth(s2,j-1)*aLt(s2,j-1,Src)-Jsouth(s2,j)*aLt(i,j,Src))/2.
               endif
@@ -370,8 +364,6 @@ subroutine CoefsLat(Spec,Coef)
           SpS1=Spec(s1,j-1)
           SpS2=Spec(s2,j-1)
         else                                        ! Regional boundary
-!          SpS1=2.*Sp0-(Spec(n1,j+1)+Spec(n2,j+1))/2.
-!          SpS2=2.*Sp0-(Spec(n1,j+1)+Spec(n2,j+1))/2.
           SpS1=Sp0
           SpS2=Sp0
         endif
@@ -379,8 +371,6 @@ subroutine CoefsLat(Spec,Coef)
           SpN1=Spec(n1,j+1)
           SpN2=Spec(n2,j+1)
         else                                        ! Regional boundary
-!          SpN1=2.*Sp0-(Spec(s1,j-1)+Spec(s2,j-1))/2.
-!          SpN2=2.*Sp0-(Spec(s1,j-1)+Spec(s2,j-1))/2.
           SpN1=Sp0
           SpN2=Sp0
         endif

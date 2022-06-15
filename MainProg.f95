@@ -42,54 +42,51 @@ program MainProgram
     call InputData('Initial')
     call OutputData('Initial')
 
-    ! Year calculation loop
+! Year calculation loop
     call LogFile('*** Start of the calculation cycle ***')
     call CalcLimits(yr,YrBeg,YrFin)
-    
     do Year=YrBeg, YrFin
 
-      ! Reading yearly input data
+! Reading yearly input data
       call InputData('Yearly')
-      ! Month calculation loop
+      
+! Month calculation loop
       call CalcLimits(mn,MonBeg,MonFin)
-
       do Month=MonBeg, MonFin
 
-        ! Reading monthly input data
+! Reading monthly input data
         call InputData('Monthly')
-        ! Day calculation loop
+        
+! Day calculation loop
         call CalcLimits(da,DayBeg,DayFin)
-
         do Day=DayBeg, DayFin
-
           call PrintScr('Daily')
-          ! Reading daily input data
+          
+! Reading daily input data
           call InputData('Daily')
 
-            ! Meteo period calculation loop 
-
+! Meteo period calculation loop 
             do Period=1, NumPer
               
-              ! Reading input data per meteo period
+! Reading input data per meteo period
               call InputData('6hourly')
-              ! Calculation of time steps in different media
+              
+! Calculation of time steps in different media
               call MediaTimeSteps
-              ! Time integration procedure
+              
+! Time integration procedure
               call TimeIntegration(NumMed)
+              
               call OutputData('6hourly')
-
             enddo
 
             call OutputData('Daily')
-          
-          enddo
+           enddo
 
           call OutputData('Monthly')
-      
         enddo
 
       call OutputData('Yearly')
-
     enddo
 
     call OutputData('Final')

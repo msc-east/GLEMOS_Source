@@ -60,7 +60,6 @@ subroutine GridGeometry
       cosY(j)=cos(LatMesh(j))
       Xscal=1
       do while(Xscal*dXmin*Rearth*cosY(j)<dLmin)
-!        if(aint(360./dXstep/real(Xscal*2))*dXstep*real(Xscal*2)<360.) exit
         if(aint(real(Imax)/real(Xscal*2))*real(Xscal*2)<real(Imax)) exit
         Xscal=Xscal*2
       enddo
@@ -183,7 +182,6 @@ subroutine GridAggreg(j,Xs,P,flag)
       do l=1, Xs
         Aver=Aver+P(i*Xs-l+1)
       enddo
-!      if(flag==1) P(i)=Aver/real(Xs)
       selectcase(flag)
       case(1)
         P(i)=Aver/real(Xs)
