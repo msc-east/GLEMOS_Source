@@ -41,7 +41,10 @@ The model supports output in netcdf4 and txt formats. More information can be fo
 
 ## Citation
 
-* GLEMOS/MSC-E (2022) Global EMEP Multi-media Modeling System (GLEMOS). https://www.msceast.org/j-stuff/glemos
+GLEMOS/MSC-E (2022) Global EMEP Multi-media Modeling System (GLEMOS). https://www.msceast.org/j-stuff/glemos
+
+## References
+
 * Tarrasón L. and Gusev A. (2008) Towards the development of a common EMEP global modeling framework. MSC-W Technical Report 1/2008.
 * Travnikov O., Jonson J.E., Andersen A.S, Gauss M., Gusev A., Rozovskaya O., Simpson D., Sokovykh V., Valiyaveetil S. and Wind P. (2009) Development of the EMEP global modelling framework: Progress report. Joint MSC-E/MSC-W Report.EMEP/MSC-E Technical Report 7/2009.
 * Jonson J. E. and Travnikov O. (Eds.). (2010) Development of the EMEP global modeling framework: Progress report. Joint MSC-W/MSC-E Report. EMEP/MSC-E Technical Report 1/2010.
