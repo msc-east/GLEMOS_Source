@@ -4,7 +4,7 @@ This repository is a part of the GLEMOS WorkSpace and contains the sourse code f
 
 ## The GLEMOS User Manual
 
-A copy of the GLEMOS User Manual can be found in the root directory of each of the four GLEMOS repositories.
+A copy of 'The_GLEMOS_User_Manual.pdf' can be found in the root directory of each of the four GLEMOS repositories.
 
 ## About GLEMOS
 
