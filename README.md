@@ -16,7 +16,7 @@ The GLEMOS modelling system was extensively evaluated in a number of numerical e
 
 ## System Requirement 
 
-The model has been verified to run on Linux Ubuntu 20.04 with HDF5 v1.10.5, netcdf-c v4.7.2, and netcdf-fortran v4.5.2 libraries preinstalled. The model uses from up to 34 GB of RAM, depending on the pollutant and the type of calculation. The matrix calculations require much more RAM than field ones, and Hg uses more RAM than POPs, while POPs uses more than HM). Currently the model is capable only with the f95 compiler that is provided with Oracle Developer Studio 12.6. Besides, the model does not support multithreading (works only in a single thread mode).
+The model has been verified to run on Linux Ubuntu 20.04 with HDF5 v1.10.5, netcdf-c v4.7.2, and netcdf-fortran v4.5.2 libraries preinstalled. The model uses from 10 to 34 GB of RAM, depending on the pollutant and the type of calculation. The matrix calculations require much more RAM than field ones, and Hg uses more RAM than POPs, while POPs uses more than HM). Currently the model is capable only with the f95 compiler that is provided with Oracle Developer Studio 12.6. Besides, the model does not support multithreading (works only in a single thread mode).
 
 ## Downloading the input data
 
