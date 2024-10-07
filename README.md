@@ -22,12 +22,12 @@ The model has been verified to run on Linux Ubuntu 20.04 with HDF5 v1.10.5, netc
 
 The sample input data are separated into several storages. Each piece of data is reachable by corresponding link:
 
-* Emissions - https://drive.google.com/file/d/1UlbO98wB_J9sKhq2kuIPt5iDHwY40Jkm/view?usp=sharing
-* MeteoData - https://drive.google.com/file/d/1K06uLzNB0ZHmt0VbkzDoxuAcP5lyblwy/view?usp=sharing
-* Dust - https://drive.google.com/file/d/1OM82xTY_q6YIqNu6g0uuAKQ5kjbgZsaH/view?usp=sharing
-* InitCond - https://drive.google.com/file/d/1HPA7rM-iD0qUD7CHJj4Gavp_4u32xp_L/view?usp=sharing
-* LandCover - https://drive.google.com/file/d/1Kpp62GMpdVXWgFJ85JRRPirfy50t4dLC/view?usp=sharing
-* ReactData - https://drive.google.com/file/d/1gsn5z7J77ReN_GfAaL-h5IjqIJjeymKL/view?usp=sharing
+* Emissions - https://drive.google.com/file/d/1gnrbqufTPLcIBTRuFMD4tftTnYPACoym/view?usp=drive_link
+* MeteoData - https://drive.google.com/file/d/1Ig3_jnPzewSNfFy4piarWAhegpeiris2/view?usp=drive_link
+* Dust - https://drive.google.com/file/d/1A8h48K6v4wJwSMDTYr2ieOFDNbcWJPHM/view?usp=drive_link
+* InitCond - https://drive.google.com/file/d/16m37WVGBKfyGz6axxfZZOPL8dU4fDCbm/view?usp=drive_link
+* LandCover - https://drive.google.com/file/d/1QzKWA1lgGGrS5QctndNYPOgMLw7tobmh/view?usp=drive_link
+* ReactData - https://drive.google.com/file/d/1HxmTojzeyhyS9YElDDDkhfbELCm8qump/view?usp=drive_link
 
 This sample dataset allows to test only the basic research functionality of the model. Generally, GLEMOS allows application on different geographical scales with various spatial resolutions. The base model grid on a global scale has horizontal resolution 1°×1°. The standard regional model domain covers the EMEP region (30°N-82°N, 30°W-90°E) with a spatial grid that has a changeable resolution down to 0.1°×0.1°. In addition, a variety of smaller domains can be used for national scale case studies. MSC-E suggest users prepare input data for their research tasks themselves in a format similar to provided sample. MSC-E is ready to provide users with advice and assistance.
 
